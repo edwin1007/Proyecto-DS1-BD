@@ -61,3 +61,55 @@ create table phone_number(
     foreign key (customer_id) references customer(customer_id)
 );
 
+/*
+tabla periodo del cliente activado y/o registrado
+*/
+create table period(
+    period_id serial primary key,
+    start_p date not null,
+    end_p date not null
+);
+
+insert into period(start_p, end_p)
+values
+    ('12-12-2019', '12-11-2020');
+
+/*
+tabla: cobros que se hacen al cliente
+*/
+create table payment(
+    payment_id int serial primary key,
+    basic_pay money not null,
+    extra_pay_min money not null,
+    extra_pay_data money not null,
+    taxes money not null,
+    customer_id into not null,
+    period_id int not null,
+    foreign key (customer_id) references customer(customer_id),
+    foreign key (period_id) references period(period_id)
+);
+
+/*
+tabla: servicios
+*/
+create table services(
+    service_id serial primary key,
+    service_type varchar(20) not null,
+);
+
+/*
+tabla: creacion de registros.
+*/
+create table register_cust(
+    register_id serial primary key,
+    reg_date date not not null,
+    reg_time time not null,
+    flux float not null,
+    phone_number_id int not null,
+    service_id int not null,
+    period_id int not null,
+    primary key (register_id),
+    foreign key (phone_number_id) references phone_number(phone_number_id),
+    foreign key (service_id) references services(service_id),
+    foreign key (period_id) references period(period_id)
+);
