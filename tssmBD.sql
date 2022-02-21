@@ -1,9 +1,9 @@
 
 /*
-tabla direccciones
+tabla: direccciones de clientes
 */
-create table street_address(
-    address_id int not null,
+create table address(
+    address_id serial,
     st_address varchar(50) not null,
     city varchar(20) not null,
     departament varchar(20) not null,
@@ -11,19 +11,19 @@ create table street_address(
 );
 
 /*
-tabla tipo de clientes
+tabla: tipo de clientes natural/corporativo
 */
 create table customer_type(
-    cust_type_id int not null,
+    cust_type_id serial,
     cust_type varchar(20) not null,
     primary key (cust_type_id)
 );
 
 /*
-tabla tipo de planes moviles
+tabla: tipo de planes moviles
 */
 create table phone_plan(
-    phone_plan_id int not null,
+    phone_plan_id serial,
     price money not null,
     gb_cloud numeric(4, 2) not null,
     gb_share numeric(4, 2) not null,
@@ -31,15 +31,16 @@ create table phone_plan(
     unlimited_sms boolean not null,
     minutes int not null,
     netflix int not null,
-    primary key (tel_plan_id)
+    description varchar(500) not null,
+    primary key (phone_plan_id)
 );
 
 
 /*
-tabla clientes
+tabla: clientes
 */
 create table customer(
-    customer_id int not null,
+    customer_id serial,
     cust_name varchar(50) not null,
     email varchar(50) not null,
     address_id int not null,
@@ -52,22 +53,27 @@ create table customer(
 );
 
 /*
-tabla lineas telefónicas
+tabla: lineas telefónicas
+se crea una base para genera los números telefónicos.
 */
+create sequence phone_seq 
+start with 4001012020 increment by 23;
+
 create table phone_number(
-    phone_number_id int not null,
+    phone_number_id int default nextval('phone_seq'),
     customer_id int not null,
-    primary key (phone_number),
+    primary key (phone_number_id),
     foreign key (customer_id) references customer(customer_id)
 );
 
 /*
-tabla periodo del cliente activado y/o registrado
+tabla: periodo del cliente activado y/o registrado
 */
 create table period(
-    period_id serial primary key,
-    start_p date not null,
-    end_p date not null
+    period_id serial,
+    start_p datetime not null,
+    end_p datetime,
+    primary key (period_id)
 );
 
 insert into period(start_p, end_p)
@@ -77,14 +83,18 @@ values
 /*
 tabla: cobros que se hacen al cliente
 */
+create sequence payment_seq 
+start with 10101012 increment by 25;
+
 create table payment(
-    payment_id int serial primary key,
+    payment_id int default nextval('payment_seq'),
     basic_pay money not null,
     extra_pay_min money not null,
     extra_pay_data money not null,
     taxes money not null,
-    customer_id into not null,
+    customer_id int not null,
     period_id int not null,
+    primary key (payment_id),
     foreign key (customer_id) references customer(customer_id),
     foreign key (period_id) references period(period_id)
 );
@@ -93,17 +103,17 @@ create table payment(
 tabla: servicios
 */
 create table services(
-    service_id serial primary key,
+    service_id serial,
     service_type varchar(20) not null,
+    primary key (service_id)
 );
 
 /*
 tabla: creacion de registros.
 */
 create table register_cust(
-    register_id serial primary key,
-    reg_date date not not null,
-    reg_time time not null,
+    register_id serial,
+    date_time datetime not null,
     flux float not null,
     phone_number_id int not null,
     service_id int not null,
