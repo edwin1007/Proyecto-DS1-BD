@@ -60,11 +60,13 @@ create sequence phone_seq
 start with 4001012020 increment by 23;
 
 create table phone_number(
-    phone_number_id int default nextval('phone_seq'),
+    number_id int default nextval('phone_seq'),
     customer_id int not null,
     primary key (phone_number_id),
     foreign key (customer_id) references customer(customer_id)
 );
+
+ALTER SEQUENCE phone_seq start with 4001012020 increment by 23;
 
 /*
 tabla: periodo del cliente activado y/o registrado
@@ -72,7 +74,7 @@ tabla: periodo del cliente activado y/o registrado
 create table period(
     period_id serial,
     start_p datetime not null,
-    end_p datetime,
+    end_p datetime not null,
     primary key (period_id)
 );
 
@@ -123,3 +125,16 @@ create table register_cust(
     foreign key (service_id) references services(service_id),
     foreign key (period_id) references period(period_id)
 );
+
+ALTER TABLE nombre_actual RENAME TO nuevo_nombre;
+
+ALTER TABLE nombre_tabla RENAME COLUMN actual_nombre_columna TO nuevo_nombre_columna;
+
+ALTER TABLE nombre_tabla ADD COLUMN nombre_columna tipo_de_dato;
+
+ALTER TABLE nombre_tabla DROP COLUMN nombre_columna;
+
+select price
+from customer cs
+join phone_plan pp on cs.customer_id = pp.phone_plan_id
+where customer_id = 1;
